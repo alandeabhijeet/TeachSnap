@@ -4,7 +4,7 @@
     <ul class="cards">
         <% for(let room of classrooms){%>
             <li>
-                <a href="/classroom/:<%=room.id%>" class="card">
+                <a href="/classroom/<%=room._id%>" class="card">
                     <img src="/images/logo.png" class="card__image item" alt="" />
                     <div class="card__overlay">
                       <div class="card__header">
@@ -12,7 +12,7 @@
                         
                         <div class="card__header-text">
                           <h3 class="card__title"><%= room.className %></h3>            
-                          <span class="card__status">Created by <%= room.teacher.username %> on <%= new Date(room.date).toLocaleDateString('en-US') %>
+
                           </span>
                         </div>
                       </div>

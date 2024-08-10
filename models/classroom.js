@@ -6,10 +6,16 @@ const classroomSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User' 
     },
-    students: [
-        { type: mongoose.Schema.Types.ObjectId,
-          ref: 'User' 
+    students: [{
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        registrationNumber: {
+            type: String,
+            required: true 
         }
+    }
     ],
     code: { type: String, unique: true },
     date: { type: Date, default: Date.now },  

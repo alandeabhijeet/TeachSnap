@@ -7,4 +7,10 @@ router.get('/', async (req, res, next) => {
     res.render('./classroom/index.ejs',classrooms)
 });
 
+router.get('/:id', async (req, res, next) => {
+    let {id} = req.params;
+    let classroom = await Classroom.findById(id).populate('teacher').populate('students') 
+    res.render('./classroom/show.ejs',{classroom})
+});
+
 module.exports = router;
