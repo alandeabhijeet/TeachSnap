@@ -14,6 +14,8 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 const dburl = process.env.ATLAS_URL;
 
+const classroomRoute = require('./routes/classroom.js');
+
 app.use(express.static("public"));
 app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }));
@@ -68,6 +70,7 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/classroom',classroomRoute)
 
 const port = 8080 ;
 app.listen(port , ()=>{

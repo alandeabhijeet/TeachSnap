@@ -12,6 +12,9 @@ const classroomSchema = new mongoose.Schema({
         }
     ],
     code: { type: String, unique: true },
+    date: { type: Date, default: Date.now },  
+    photo: { type: String, default: '/images/logo' },  
+    description: { type: String , required : true} 
 });
 
 module.exports = mongoose.model('Classroom', classroomSchema);

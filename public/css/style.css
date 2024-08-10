@@ -1,0 +1,255 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: neu;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  background-color: #EFEAE3;
+  
+}
+.contentBody{
+  padding: 2rem;
+}
+#main {
+  /* background-color: black; */
+  z-index: 10;
+  position: relative;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: #000000;
+  font-size: 1rem;
+}
+
+a:hover {
+  color: #FE320A;
+}
+
+header {
+  position: relative;
+  /* padding: 0 2rem; */
+}
+
+.navbar {
+  width: 100%;
+  height: 65px !important;
+  max-width: 12000px;
+  position: sticky;
+  top : 0 !important;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 84;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.navbar .logo a {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar .links {
+  display: flex;
+  gap: 2rem;
+}
+
+.navbar .toggle_btn {
+  color: #000000;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: none;
+}
+.logo{
+  display: flex;
+  align-items: center;
+  margin-left: 2rem;
+}
+.action_btn {
+  background-color: #FE320A;
+  color: #000000;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 2rem;
+  transition: all 0.2s ease; /* Added unit for time */
+}
+
+.action_btn:hover {
+  transform: scale(1.05); /* Fixed scale syntax */
+  color: #000000;
+}
+
+.action_btn:active {
+  transform: scale(0.95); /* Fixed scale syntax */
+}
+
+.dropdown {
+  margin-top: 0.3rem;
+  display: none;
+  position: absolute;
+  right: 2rem;
+  top: 60px;
+  width: 250px;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(15px);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: height 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.dropdown.open {
+  display: block; /* Ensure the dropdown is displayed when open */
+  height: 250px;
+}
+
+.dropdown li {
+  padding: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropdown .action_btn {
+  width: 90%;
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .navbar .links, .navbar .action_btn {
+      display: none;
+  }
+
+  .navbar .toggle_btn {
+      display: block;
+  }
+
+  .dropdown {
+      display: block !important;
+  }
+}
+
+:root {
+  --surface-color: #fff;
+  --curve: 40;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px,30%));
+  gap: 2rem;
+  margin: 4rem 5vw;
+  padding: 0;
+  list-style-type: none;
+}
+
+.card {
+  position: relative;
+  display: block;
+  height: 100%;  
+  border-radius: calc(var(--curve) * 1px);
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.card__image {      
+  width: 100%;
+  height: auto;
+}
+
+.card__overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;      
+  border-radius: calc(var(--curve) * 1px);    
+  background-color: var(--surface-color);      
+  transform: translateY(100%);
+  transition: .2s ease-in-out;
+}
+
+.card:hover .card__overlay {
+  transform: translateY(0);
+}
+
+.card__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2em;
+  padding: 2em;
+  border-radius: calc(var(--curve) * 1px) 0 0 0;    
+  background-color: var(--surface-color);
+  transform: translateY(-100%);
+  transition: .2s ease-in-out;
+}
+
+.card__arc {
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  bottom: 100%;
+  right: 0;      
+  z-index: 1;
+}
+
+.card__arc path {
+  fill: var(--surface-color);
+  d: path("M 40 80 c 22 0 40 -22 40 -40 v 40 Z");
+}       
+
+.card:hover .card__header {
+  transform: translateY(0);
+}
+/* Later small photo */
+.card__thumb {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;      
+  border-radius: 50%;      
+}
+
+.card__title {
+  font-size: 1em;
+  margin: 0 0 .3em;
+  color: #6A515E;
+}
+
+.card__tagline {
+  display: block;
+  margin: 1em 0;
+  font-family: "MockFlowFont";  
+  font-size: .8em; 
+  color: #D7BDCA;  
+}
+
+.card__status {
+  font-size: .8em;
+  color: #D7BDCA;
+}
+
+.card__description {
+  padding: 0 2em 2em;
+  margin: 0;
+  color: #D7BDCA;
+  font-family: "MockFlowFont";   
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}    
+
