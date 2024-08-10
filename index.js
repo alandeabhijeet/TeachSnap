@@ -15,10 +15,10 @@ const User = require("./models/user.js");
 const dburl = process.env.ATLAS_URL;
 
 const classroomRoute = require('./routes/classroom.js');
-
 app.use(express.static("public"));
 app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); 
 app.set("view engine", "ejs");
 app.engine('ejs', ejsMate);
 

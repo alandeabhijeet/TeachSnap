@@ -253,3 +253,214 @@ header {
   overflow: hidden;
 }    
 
+/* Mixins */
+.border-radius {
+    border-radius: 0.3rem;
+}
+
+.transition {
+    transition: 0.2s ease-in-out;
+}
+
+/* General Styling */
+body {
+    color: slategray;
+}
+
+.table {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    padding: 2rem 0 0 0;
+    max-width: 1100px;
+}
+
+.table-cell {
+    box-sizing: border-box;
+    flex-grow: 1;
+    width: 100%;
+    padding: 0.8em 1.2em;
+    overflow: hidden;
+    list-style-type: none;
+    outline: 1px solid #ddd;
+    text-align: center;
+    font-weight: 300;
+    margin-top: 1px;
+    margin-left: 1px;
+}
+
+.table-cell:first-child {
+    outline: 1px solid #fff;
+    background: transparent;
+}
+
+.table-cell:nth-child(3) {
+    outline: 1px solid #30305b;
+}
+
+.table-cell:nth-child(-n+3) {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.table-cell h3 {
+    font-size: 26px;
+    margin-top: 0;
+    margin-bottom: 3rem;
+}
+
+.table-cell.cell-feature {
+    text-align: left;
+    font-size: 18px;
+}
+
+.table-cell.plattform {
+    color: limegreen;
+}
+
+.table-cell.plattform a.btn {
+    color: limegreen;
+}
+
+.table-cell.plattform a.btn:hover {
+    background-color: limegreen;
+    border-color: limegreen;
+    color: white;
+}
+
+.table-cell.enterprise {
+    background-color: #30305b;
+    color: #85bafc;
+}
+
+.table-cell.enterprise a.btn {
+    color: #85bafc;
+}
+
+.table-cell.enterprise a.btn:hover {
+    background-color: #85bafc;
+    border-color: #85bafc;
+    color: #30305b;
+}
+
+.table-cell {
+    width: calc(33.33% - 1px);
+}
+
+.table-cell.cell-feature {
+    width: 100%;
+    text-align: center;
+}
+
+svg.enterprise-check path {
+    fill: #30305b !important;
+}
+
+a.btn {
+    border: 2px solid;
+    padding: 0.6rem 0.9rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: 0.2s ease-in-out;
+    border-radius: 0.3rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+thead th {
+  background-color: #e7a05a85; /* Blue background */
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-size: 16px;
+}
+
+tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* SVG icon styling */
+.toggle-icon {
+  cursor: pointer;
+}
+
+.icon-path {
+  transition: fill 0.3s ease;
+}
+
+.toggle-icon:hover .icon-path {
+  fill: #28a745; /* Darker green on hover */
+}
+
+/* From Uiverse.io by Codecite */ 
+/* Styling for button */
+.btn {
+  transition: all 0.3s ease-in-out;
+  font-family: "Dosis", sans-serif;
+}
+
+button {
+  width: 9em;
+  height: 3em;
+  border-radius: 30em;
+  font-size: 15px;
+  font-family: inherit;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  background-color: #e7a05a85;
+  z-index: 1;
+  box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+  background-color: transparent; /* Ensure the background is transparent to see the gradient */
+}
+
+button::before {
+  content: '';
+  width: 0;
+  height: 3em;
+  border-radius: 30em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: linear-gradient(to right, #efebe3 0%, #e7a05a85 100%);
+  transition: .5s ease;
+  display: block;
+  z-index: -1;
+}
+
+button:hover::before {
+  width: 9em;
+}
+
+/* Styling for input */
+.dateinput {
+  width: 9em;
+  height: 3em;
+  border-radius: 30em;
+  font-size: 15px;
+  font-family: inherit;
+  border: 1px solid #c5c5c5; /* Similar border to match button shadow */
+  padding: 0 1em;
+  box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+  transition: box-shadow 0.3s ease-in-out;
+  background-color : #e7a05a85 /* Ensure the background is white */
+}
+
+.dateinput:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(231, 160, 90, 0.5); /* Highlight focus with a subtle color */
+}
+
+/* Flexbox container */
+.fbtn {
+  display: flex;
+  align-items: center; /* Align items vertically in the center */
+  justify-content: center;
+  gap: 5rem; /* Space between input and button */
+}
