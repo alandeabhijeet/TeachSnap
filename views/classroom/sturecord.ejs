@@ -1,0 +1,44 @@
+<% layout("/layouts/boilerplate.ejs") -%>
+
+<div>
+    <table class="attendance-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <% for (let record of records) { %>
+                    <th>
+                        <%= new Date(record.date).toISOString().slice(0, 10) %>
+                    </th>
+                <% } %>
+                <th>Total Attendance</th> <!-- Total column header -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <% let rowSum = 0; %>
+                <% for (let i = 0; i < records.length; i++) { %>
+                    <% 
+                        // Find attendance for the current student in the current record
+                        let attendance = records[i].attendance.find(att => att.registerNo === studentRegisterNo);
+                        let cellContent = 'N/A';
+                        let cellColor = 'black'; // Default color for 'N/A'
+                        if (attendance) {
+                            if (attendance.status) {
+                                // True (Green Checkmark)
+                                cellContent = '✓';
+                                cellColor = 'limegreen';
+                                rowSum++;
+                            } else {
+                                // False (Red Cross)
+                                cellContent = '✗';
+                                cellColor = 'red';
+                            }
+                        }
+                    %>
+                    <td style="text-align: center; color: <%= cellColor %>;"><%= cellContent %></td>
+                <% } %>
+                <td><%= rowSum %></td> <!-- Row total -->
+            </tr>
+        </tbody>
+    </table>
+</div>

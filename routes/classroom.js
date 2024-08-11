@@ -3,22 +3,28 @@ const router = express.Router();
 const Classroom = require('../models/classroom.js')
 const Register = require('../models/register');
 const { v4: uuidv4 } = require('uuid');
+let wrapAsync = require('../utils/wrapAsync.js')
+let {isLoggedIn , isTeacher} = require("../middleware.js");
 
-router.get('/', async (req, res, next) => {
-    console.log(res.locals.currUser)
+router.get('/',isLoggedIn, wrapAsync( async (req, res, next) => {
     const currUserId = res.locals.currUser._id;
     const classrooms = await Classroom.find({
         $or: [
           { teacher: currUserId },
           { 'students.user': currUserId }]
     }).populate('teacher');
+    if(!classrooms){
+      req.flash("error" , "Requested Classrooms not exits!");
+      res.redirect("/listings");
+  }
     res.render('./classroom/index.ejs',{classrooms})
-});
+}));
 
-router.get('/create',(req,res)=>{
+router.get('/create',isLoggedIn , wrapAsync( async(req,res)=>{
     res.render('./classroom/create.ejs')
-})
-router.post('/create',async(req,res)=>{
+}))
+
+router.post('/create',isLoggedIn,wrapAsync( async (req,res)=>{
     let {className , description} = req.body;
     const currUserId = res.locals.currUser._id;
     const code = uuidv4().replace(/-/g, '').slice(0, 6);
@@ -29,18 +35,19 @@ router.post('/create',async(req,res)=>{
         code
     });
     await newClassroom.save();
+    req.flash("success" , "Classroom Created!");
     res.redirect('/classroom');
-})
+}))
 
-router.get('/enroll',(req,res)=>{
+router.get('/enroll',isLoggedIn, wrapAsync( async(req,res)=>{
   res.render('./classroom/enroll.ejs')
-})
-router.post('/enroll', async(req,res)=>{
+}))
+
+router.post('/enroll',isLoggedIn,wrapAsync( async (req,res)=>{
     let {code , registrationNumber} = req.body;
     const currUserId = res.locals.currUser._id;
 
     let cls = await Classroom.findOne({code : code});
-    console.log(cls);
 
     let newStudent = {
         user: currUserId,
@@ -54,28 +61,29 @@ router.post('/enroll', async(req,res)=>{
   });
 
     await cls.save();
+    req.flash("success" , "Enroll Successfully !");
     res.redirect('/classroom'); 
-})
+}))
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id',isLoggedIn, wrapAsync( async (req, res, next) => {
     let {id} = req.params;
-    let classroom = await Classroom.findById(id).populate('teacher').populate('students') 
+    let classroom = await Classroom.findById(id).populate('teacher').populate('students')
+    if (!classroom.teacher.equals(req.user._id)) {
+      return res.redirect(`/classroom/${id}/record`);
+    }
     res.render('./classroom/show.ejs',{classroom})
-});
+}));
 
 
-router.post('/:classroomId/attendance', async (req, res) => {
-    try {
+router.post('/:classroomId/attendance',isLoggedIn ,isTeacher , wrapAsync( async (req, res) => {
       const classroomId = req.params.classroomId;
       const date = new Date(req.body.date);
       const attendanceData = req.body.attendance; 
       
-      console.log('Attendance Data:', attendanceData);
-      console.log('Date:', date);
       let absentRegistration=[];
       if((attendanceData != undefined)){
         absentRegistration = Object.keys(attendanceData).filter(key => attendanceData[key] === '0');
-        console.log('Absent Registration:', absentRegistration);
+        
       }
       const classroom = await Classroom.findById(classroomId).populate('students');
       if (!classroom) {
@@ -96,23 +104,14 @@ router.post('/:classroomId/attendance', async (req, res) => {
       });
   
       await register.save();
-      res.redirect('/classroom'); 
-    } catch (error) {
-      console.error('Error saving attendance records:', error);
-      res.status(500).send('Error saving attendance records');
-    }
-  });
+      req.flash("success" , "Attendance added !");
+      res.redirect(`/classroom/${classroomId}`); 
+}));
 
-router.get('/:classroomId/record', async (req, res) => {
-    try {
-        let { classroomId } = req.params;
-        let records = await Register.find({ classroom: classroomId }).populate('attendance');
-        
-        res.render('./classroom/record.ejs',{records})
-    } catch (error) {
-        console.error('Error fetching records:', error);
-        res.status(500).send('Server Error');
-    }
-});
+router.get('/:classroomId/record',isLoggedIn ,  wrapAsync( async(req, res) => {
+    let { classroomId } = req.params;
+    let records = await Register.find({ classroom: classroomId }).populate('attendance');
+    res.render('./classroom/record.ejs',{records})
+}));
 
 module.exports = router;

@@ -13,7 +13,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 const dburl = process.env.ATLAS_URL;
-
+const MyError = require("./utils/MyEroor.js");
 const classroomRoute = require('./routes/classroom.js');
 const userRoute = require('./routes/user.js');
 
@@ -68,12 +68,23 @@ main().then(() => {
 
 // Global Middleware
 app.use((req, res, next) => {
+    res.locals.successMsg = req.flash("success");
+    res.locals.errorMsg = req.flash("error");
     res.locals.currUser = req.user;
     next();
 });
 
 app.use('/',userRoute);
 app.use('/classroom',classroomRoute)
+
+app.all("*", (req, res, next) => {
+    next(new MyError(404, "Route Not Exists"));
+});
+
+app.use((err, req, res, next) => {
+    const { status = 400, message = "Something went wrong" } = err;
+    res.status(status).render("./classroom/error.ejs", { message });
+});
 
 const port = 8080 ;
 app.listen(port , ()=>{
