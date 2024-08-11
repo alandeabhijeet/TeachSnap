@@ -32,6 +32,31 @@ router.post('/create',async(req,res)=>{
     res.redirect('/classroom');
 })
 
+router.get('/enroll',(req,res)=>{
+  res.render('./classroom/enroll.ejs')
+})
+router.post('/enroll', async(req,res)=>{
+    let {code , registrationNumber} = req.body;
+    const currUserId = res.locals.currUser._id;
+
+    let cls = await Classroom.findOne({code : code});
+    console.log(cls);
+
+    let newStudent = {
+        user: currUserId,
+        registrationNumber
+    };
+    cls.students.push(newStudent);
+    cls.students.sort((a, b) => {
+      const regA = a.registrationNumber.toUpperCase();
+      const regB = b.registrationNumber.toUpperCase();
+      return regA.localeCompare(regB);
+  });
+
+    await cls.save();
+    res.redirect('/classroom'); 
+})
+
 router.get('/:id', async (req, res, next) => {
     let {id} = req.params;
     let classroom = await Classroom.findById(id).populate('teacher').populate('students') 

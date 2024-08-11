@@ -647,3 +647,7 @@ form button:active {
 .btrow{
   margin-left: 2rem;
 }
+#btns{
+  display: flex;
+  justify-content: space-evenly;
+}
