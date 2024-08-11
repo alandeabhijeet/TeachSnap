@@ -3,15 +3,30 @@ const router = express.Router();
 const Classroom = require('../models/classroom.js')
 const Register = require('../models/register');
 router.get('/', async (req, res, next) => {
-    classrooms = await Classroom.find({}).populate('teacher') 
-    res.render('./classroom/index.ejs',classrooms)
+    console.log(res.locals.currUser)
+    const currUserId = res.locals.currUser._id;
+
+        // Find classrooms where the user is either the teacher or a student
+        const classrooms = await Classroom.find({
+            $or: [
+                { teacher: currUserId },
+                { 'students.user': currUserId }
+            ]
+        }).populate('teacher');
+
+    res.render('./classroom/index.ejs',{classrooms})
 });
+
+// router.get('/create',(req,res)=>{
+
+// })
 
 router.get('/:id', async (req, res, next) => {
     let {id} = req.params;
     let classroom = await Classroom.findById(id).populate('teacher').populate('students') 
     res.render('./classroom/show.ejs',{classroom})
 });
+
 
 router.post('/classroom/:classroomId/attendance', async (req, res) => {
     try {
@@ -57,7 +72,7 @@ router.post('/classroom/:classroomId/attendance', async (req, res) => {
     }
   });
 
-  router.get('/:classroomId/record', async (req, res) => {
+router.get('/:classroomId/record', async (req, res) => {
     try {
         let { classroomId } = req.params;
         // Fetch records and populate the 'attendance' field
