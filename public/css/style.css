@@ -11,9 +11,7 @@ html, body {
   background-color: #EFEAE3;
   
 }
-.contentBody{
-  padding: 2rem;
-}
+
 #main {
   /* background-color: black; */
   z-index: 10;
@@ -651,3 +649,237 @@ form button:active {
   display: flex;
   justify-content: space-evenly;
 }
+
+#loader {
+  height: 100% !important;
+  width: 100%;
+  background-color: #000;
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  transition: all ease 0.7s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#loader h1 {
+  font-size: 4vw;
+  color: transparent;
+  background: linear-gradient(to right, orange, rgb(255, 132, 0));
+  -webkit-background-clip: text;
+  position: absolute;
+  opacity: 0;
+  animation-name: load;
+  animation-duration: 1s;
+  animation-delay: 1s;
+  animation-timing-function: linear;
+}
+
+#loader h1:nth-child(2) {
+  animation-delay: 2s;
+}
+
+#loader h1:nth-child(3) {
+  animation-delay: 3s;
+}
+
+@keyframes load {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 1;
+  }
+}
+
+
+
+#page1 {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 3rem;
+}
+
+#right {
+  width: 40%;
+}
+
+#myVideo {
+  width: 100%;
+  border-radius: 15px; /* Add border-radius to video */
+  max-height: 75vh; /* Ensure video height is within container */
+  position: relative; /* Position relative to layer above #hero */
+  z-index: 2; /* Ensure video is on top of #hero */
+}
+
+@media (max-width: 750px) {
+  #page1 {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  #right {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  #myVideo {
+    width: 90%;
+    max-height: 50vh; /* Adjust video height for smaller screens */
+  }
+  #hero {
+    /* Remove or adjust animation related properties if needed */
+    filter: none; /* Remove blur effect if you want */
+    display: none;
+  }
+
+  #hero1 {
+    /* Remove animation for smaller screens */
+    animation: none; /* Disable animation */
+    display: none;
+  }
+}
+
+#hero {
+  position: absolute; /* Make #hero position absolute to align it with video */
+  height: 35vw;
+  width: 40vw;
+  background-color: #f16812;
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+  right: 0;
+  filter: blur(20px);
+  z-index: 1; /* Ensure #hero is below the video */
+}
+
+#hero1 {
+  height: 35vw;
+  width: 40vw;
+  background: linear-gradient(#f16812, #e43f1e55);
+  border-radius: 50%;
+  filter: blur(23px);
+  animation: Ani1 1s linear infinite alternate;
+  position: absolute; /* Position absolute to align within #hero */
+  top: 0;
+  left: 0;
+}
+
+@keyframes Ani1 {
+  from {
+    transform: translate(-5%, -2%);
+  }
+  to {
+    transform: translate(0%, 3%);
+  }
+}
+
+
+#page2{
+  width: 100%;
+  background-color: #EFEAE3;
+  padding: 2vw;
+  position: relative;
+}
+#moving{
+  white-space: nowrap;
+  overflow-x: auto;
+  margin-bottom: 5vw;
+}
+#moving::-webkit-scrollbar{
+  display: none;
+}
+.con{
+  display: inline-block;
+  animation: move 8s linear 0ms infinite ;
+}
+.con h3{
+  display: inline-block;
+  font-weight: 900;
+  font-size: 5vw;
+}
+.gola{
+  margin-top: 1.5vw;
+  height: 3.5vw;
+  width: 3.5vw;
+  background-color: #FE320A;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+@keyframes move {
+  from{
+      transform: translateX(0);
+  }to{
+      transform: translateX(-100%);
+  }
+}
+#Tbold{
+  font-size: 5vw;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap");
+
+
+.footer {
+  position: relative;
+  width: 100%;
+  background: #da8048;
+  min-height: 100px;
+  padding: 20px 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.social-icon,
+.menu {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.social-icon__item,
+.menu__item {
+  list-style: none;
+}
+
+.social-icon__link {
+  font-size: 2rem;
+  color: #fff;
+  margin: 0 10px;
+  display: inline-block;
+  transition: 0.5s;
+}
+.social-icon__link:hover {
+  transform: translateY(-10px);
+}
+
+.menu__link {
+  font-size: 1.2rem;
+  color: #fff;
+  margin: 0 10px;
+  display: inline-block;
+  transition: 0.5s;
+  text-decoration: none;
+  opacity: 0.75;
+  font-weight: 300;
+}
+
+.menu__link:hover {
+  opacity: 1;
+}
+
+.footer p {
+  color: #fff;
+  margin: 15px 0 10px 0;
+  font-size: 1rem;
+  font-weight: 300;
+}
+

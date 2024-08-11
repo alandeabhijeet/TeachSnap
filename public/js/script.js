@@ -69,4 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+var loader = document.querySelector("#loader")
+    setTimeout(()=> {
+        loader.style.top = "-100%"
+    }, 4200);
 
+document.getElementById("myVideo").addEventListener("click", function() {
+        // Toggle the muted property
+        this.muted = !this.muted;
+    });
+    
