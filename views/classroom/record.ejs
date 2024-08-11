@@ -1,0 +1,76 @@
+<% layout("/layouts/boilerplate.ejs") -%>
+
+<div>
+    <table class="attendance-table">
+        <thead>
+            <tr>
+                <th>Registration Number</th>
+                <% 
+                    let columnSums = Array(records.length).fill(0); // Initialize column sums
+                %>
+                <% for (let record of records) { %>
+                    <th>
+                        Date: <%= new Date(record.date).toISOString().slice(0, 10) %>
+                    </th>
+                <% } %>
+                <th>Attendance</th> <!-- Total column header -->
+            </tr>
+        </thead>
+        <tbody>
+            <% 
+                // Collect all unique registration numbers
+                let allRegisterNos = new Set();
+                records.forEach(record => {
+                    record.attendance.forEach(attendance => {
+                        allRegisterNos.add(attendance.registerNo);
+                    });
+                });
+                allRegisterNos = Array.from(allRegisterNos);
+
+                // Initialize row sums
+                let rowSums = {};
+                allRegisterNos.forEach(registerNo => {
+                    rowSums[registerNo] = 0;
+                });
+            %>
+            <% allRegisterNos.forEach(registerNo => { %>
+                <tr>
+                    <td><%= registerNo %></td>
+                    <% let rowSum = 0; %>
+                    <% for (let i = 0; i < records.length; i++) { %>
+                        <% 
+                            // Find attendance for the current registration number in the current record
+                            let attendance = records[i].attendance.find(att => att.registerNo === registerNo);
+                            let cellContent = 'N/A';
+                            let cellColor = 'black'; // Default color for 'N/A'
+                            if (attendance) {
+                                if (attendance.status) {
+                                    // True (Green Checkmark)
+                                    cellContent = '✓';
+                                    cellColor = 'limegreen';
+                                    rowSum++;
+                                    columnSums[i]++;
+                                } else {
+                                    // False (Red Cross)
+                                    cellContent = '✗';
+                                    cellColor = 'red';
+                                }
+                            }
+                        %>
+                        <td style="text-align: center; color: <%= cellColor %>;"><%= cellContent %></td>
+                    <% } %>
+                    <td><%= rowSum %></td> <!-- Row total -->
+                </tr>
+            <% }); %>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Total</th>
+                <% columnSums.forEach(sum => { %>
+                    <th><%= sum %></th> <!-- Column total -->
+                <% }); %>
+                <th></th> <!-- Placeholder for last column -->
+            </tr>
+        </tfoot>
+    </table>
+</div>

@@ -39,24 +39,37 @@ router.post('/classroom/:classroomId/attendance', async (req, res) => {
       const absentSet = new Set(absentRegistration);
       const attendanceRecords = allRegistration.map(registrationNo => ({
         registerNo: registrationNo,
-        date: date,
         status: !absentSet.has(registrationNo) // Present if not in absentRegistration
       }));
   
       // Create and save the register document
       const register = new Register({
         classroom: classroomId,
-        attendance: attendanceRecords
+        attendance: attendanceRecords,
+        date: date // Add date to the register document
       });
   
       await register.save();
-      res.status(201).send('Attendance records saved successfully');
+      res.redirect('/classroom'); // Redirect to /classroom after saving
     } catch (error) {
       console.error('Error saving attendance records:', error);
       res.status(500).send('Error saving attendance records');
     }
   });
-  
+
+  router.get('/:classroomId/record', async (req, res) => {
+    try {
+        let { classroomId } = req.params;
+        // Fetch records and populate the 'attendance' field
+        let records = await Register.find({ classroom: classroomId }).populate('attendance');
+        
+        res.render('./classroom/record.ejs',{records})
+    } catch (error) {
+        console.error('Error fetching records:', error);
+        res.status(500).send('Server Error');
+    }
+});
+
 
 
 

@@ -464,3 +464,27 @@ button:hover::before {
   justify-content: center;
   gap: 5rem; /* Space between input and button */
 }
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse; /* Ensures borders between cells are combined */
+}
+
+.attendance-table th, .attendance-table td {
+  padding: 10px; /* Adds space inside each cell */
+  border: 1px solid #ddd; /* Adds a light border to each cell */
+  text-align: center; /* Centers text in each cell */
+}
+
+.attendance-table th {
+  background-color: #e7a05a85; /* Light background color for header cells */
+}
+
+.attendance-table td {
+  color: #333; /* Default text color */
+}
+
+.attendance-table tfoot th, .attendance-table tfoot td {
+  font-weight: bold; /* Makes footer text bold */
+  background-color: #e7a05a85; /* Light background color for footer */
+}

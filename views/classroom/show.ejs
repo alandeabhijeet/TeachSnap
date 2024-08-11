@@ -32,5 +32,9 @@
             </div>
         </div>
     </form>
-    <%= classroom %>
+    <form action="/classroom/<%= classroom._id %>/record" method="get">
+        <button type="submit">Record</button>
+    </form>
+    
+    
 </div>
