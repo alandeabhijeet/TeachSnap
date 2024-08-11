@@ -111,7 +111,7 @@ header {
 
 .dropdown.open {
   display: block; /* Ensure the dropdown is displayed when open */
-  height: 250px;
+  height: 100px;
 }
 
 .dropdown li {
