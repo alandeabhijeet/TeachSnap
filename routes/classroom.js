@@ -5,6 +5,27 @@ const Register = require('../models/register');
 const { v4: uuidv4 } = require('uuid');
 let wrapAsync = require('../utils/wrapAsync.js')
 let {isLoggedIn , isTeacher} = require("../middleware.js");
+let {classroomValidationSchema} = require("../schema.js");
+
+let validateClassroom = (req,res,next)=>{
+  let {err} = classroomValidationSchema.validate(req.body);
+  if(err){
+      throw new MyError (403,err);
+  }else{
+      next();
+  }
+}
+
+let {registerValidationSchema} = require("../schema.js");
+
+let validateRegister = (req,res,next)=>{
+  let {err} = registerValidationSchema.validate(req.body);
+  if(err){
+      throw new MyError (403,err);
+  }else{
+      next();
+  }
+}
 
 router.get('/',isLoggedIn, wrapAsync( async (req, res, next) => {
     const currUserId = res.locals.currUser._id;
@@ -24,7 +45,7 @@ router.get('/create',isLoggedIn , wrapAsync( async(req,res)=>{
     res.render('./classroom/create.ejs')
 }))
 
-router.post('/create',isLoggedIn,wrapAsync( async (req,res)=>{
+router.post('/create',isLoggedIn,validateClassroom,wrapAsync( async (req,res)=>{
     let {className , description} = req.body;
     const currUserId = res.locals.currUser._id;
     const code = uuidv4().replace(/-/g, '').slice(0, 6);
@@ -43,7 +64,7 @@ router.get('/enroll',isLoggedIn, wrapAsync( async(req,res)=>{
   res.render('./classroom/enroll.ejs')
 }))
 
-router.post('/enroll',isLoggedIn,wrapAsync( async (req,res)=>{
+router.post('/enroll',isLoggedIn,validateClassroom,wrapAsync( async (req,res)=>{
     let {code , registrationNumber} = req.body;
     const currUserId = res.locals.currUser._id;
 
@@ -75,7 +96,7 @@ router.get('/:id',isLoggedIn, wrapAsync( async (req, res, next) => {
 }));
 
 
-router.post('/:classroomId/attendance',isLoggedIn ,isTeacher , wrapAsync( async (req, res) => {
+router.post('/:classroomId/attendance',isLoggedIn ,isTeacher ,validateRegister, wrapAsync( async (req, res) => {
       const classroomId = req.params.classroomId;
       const date = new Date(req.body.date);
       const attendanceData = req.body.attendance; 
