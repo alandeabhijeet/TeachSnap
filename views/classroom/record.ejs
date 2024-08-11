@@ -10,7 +10,7 @@
                 %>
                 <% for (let record of records) { %>
                     <th>
-                        Date: <%= new Date(record.date).toISOString().slice(0, 10) %>
+                        <%= new Date(record.date).toISOString().slice(0, 10) %>
                     </th>
                 <% } %>
                 <th>Attendance</th> <!-- Total column header -->

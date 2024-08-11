@@ -7,20 +7,20 @@
                 <a href="/classroom/<%=room._id%>" class="card">
                     <img src="/images/logo.png" class="card__image item" alt="" />
                     <div class="card__overlay">
-                      <div class="card__header">
+                    <div class="card__header">
                         <svg class="card__arc" xmlns="http://www.w3.org/2000/svg"><path /></svg>                     
                         
                         <div class="card__header-text">
-                          <h3 class="card__title"><%= room.className %></h3>            
-
-                          </span>
+                          <h3 class="card__title"><%= room.className %></h3>  
+                          <% if (currUser && room.teacher.equals(currUser._id)) { %>
+                              <h3 class="card__title">Code &nbsp;: &nbsp;<%= room.code %></h3>
+                          <% } %>
                         </div>
-                      </div>
+                    </div>
                       <p class="card__description"><%= room.description %></p>
                       
                     </div>
                   </a>
-                
             </li>
         <%}%>
     </ul>
