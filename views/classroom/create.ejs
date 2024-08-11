@@ -1,0 +1,23 @@
+<% layout("/layouts/boilerplate.ejs") -%>
+
+<div class="login-box" id="formdiv">
+ 
+    <div id="formitem">
+        <form action="/classroom/create" method="post">
+            <div class="user-box">
+              <input type="text" name="className" required>
+              <label>Class Name</label>
+            </div>
+            <div class="user-box">
+              <input type="text" name="description" required>
+              <label>Description</label>
+            </div>
+            <br>
+            <div class="btrow">
+                <form action="/classroom/create">
+                  <button type="submit">Create Class</button>
+                </form>
+            </div>
+        </form>
+    </div>
+  </div>
