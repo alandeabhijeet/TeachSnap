@@ -96,38 +96,43 @@ router.get('/:id',isLoggedIn, wrapAsync( async (req, res, next) => {
 }));
 
 
-router.post('/:classroomId/attendance',isLoggedIn ,isTeacher ,validateRegister, wrapAsync( async (req, res) => {
-      const classroomId = req.params.classroomId;
-      const date = new Date(req.body.date);
-      const attendanceData = req.body.attendance; 
-      
-      let absentRegistration=[];
-      if((attendanceData != undefined)){
-        absentRegistration = Object.keys(attendanceData).filter(key => attendanceData[key] === '0');
-        
-      }
-      const classroom = await Classroom.findById(classroomId).populate('students');
-      if (!classroom) {
-        return res.status(404).send('Classroom not found');
-      }
-      const allRegistration = classroom.students.map(student => student.registrationNumber);
+router.post('/:classroomId/attendance', isLoggedIn, isTeacher, validateRegister, wrapAsync(async (req, res) => {
+  const classroomId = req.params.classroomId;
+  const date = new Date(req.body.date);
+  const attendanceData = req.body.attendance;
+
   
-      const absentSet = new Set(absentRegistration);
-      const attendanceRecords = allRegistration.map(registrationNo => ({
-        registerNo: registrationNo,
-        status: !absentSet.has(registrationNo) 
-      }));
+  let absentRegistration = [];
+  if (attendanceData !== undefined) {
+      absentRegistration = Object.keys(attendanceData)
+          .filter(key => attendanceData[key] === '0')
+          .map(key => key.replace('reg-', ''));  // Remove 'reg-' prefix
+  }
+
   
-      const register = new Register({
-        classroom: classroomId,
-        attendance: attendanceRecords,
-        date: date
-      });
-  
-      await register.save();
-      req.flash("success" , "Attendance added !");
-      res.redirect(`/classroom/${classroomId}`); 
+  const classroom = await Classroom.findById(classroomId).populate('students');
+  if (!classroom) {
+      return res.status(404).send('Classroom not found');
+  }
+  const allRegistration = classroom.students.map(student => student.registrationNumber);
+
+  const absentSet = new Set(absentRegistration);
+  const attendanceRecords = allRegistration.map(registrationNo => ({
+      registerNo: registrationNo,
+      status: !absentSet.has(registrationNo)
+  }));
+
+  const register = new Register({
+      classroom: classroomId,
+      attendance: attendanceRecords,
+      date: date
+  });
+
+  await register.save();
+  req.flash("success", "Attendance added!");
+  res.redirect(`/classroom/${classroomId}`);
 }));
+
 
 router.get('/:classroomId/record',isLoggedIn ,  wrapAsync( async(req, res) => {
     let { classroomId } = req.params;

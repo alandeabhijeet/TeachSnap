@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isPresent = svg.getAttribute('data-status') === '1';
             const newStatus = isPresent ? '0' : '1';
             const registrationNumber = svg.getAttribute('data-registration-number');
-
+            
             // Update SVG color and icon based on status
             const iconPath = svg.querySelector('.icon-path');
             if (newStatus === '1') {
