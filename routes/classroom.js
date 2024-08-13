@@ -66,7 +66,7 @@ router.get('/enroll',isLoggedIn, wrapAsync( async(req,res)=>{
 
 router.post('/enroll',isLoggedIn,validateClassroom,wrapAsync( async (req,res)=>{
     let {code , registrationNumber} = req.body;
-    const currUserId = res.locals.currUser._id;
+    const currUserId = res.locals.currUsfinder._id;
 
     let cls = await Classroom.findOne({code : code});
 
@@ -136,8 +136,11 @@ router.post('/:classroomId/attendance', isLoggedIn, isTeacher, validateRegister,
 
 router.get('/:classroomId/record',isLoggedIn ,  wrapAsync( async(req, res) => {
     let { classroomId } = req.params;
+    let cls = await Classroom.findById(classroomId)
+    let teacherId = cls.teacher;
+   
     let records = await Register.find({ classroom: classroomId }).populate('attendance');
-    res.render('./classroom/record.ejs',{records , classroomId})
+    res.render('./classroom/record.ejs',{records , classroomId , teacherId})
 }));
 
 async function findRegistrationNumber(classroomId, userId) {
@@ -158,7 +161,7 @@ async function findRegistrationNumber(classroomId, userId) {
         throw error;
     }
 }
-router.post('/:classroomId/submit-attendance', async (req, res) => {
+router.post('/:classroomId/submit-attendance', wrapAsync( async(req, res) => {
     let {classroomId} = req.params
     const {  latitude, longitude } = req.body;
     const currUserId = res.locals.currUser._id;
@@ -180,9 +183,9 @@ router.post('/:classroomId/submit-attendance', async (req, res) => {
         req.flash("error", "No open form session found");
         res.redirect(`/classroom/${classroomId}`);
     }
-});
+}));
 
-router.get('/:classroomId/form', async (req, res) => {
+router.get('/:classroomId/form',wrapAsync( async (req, res) => {
     const { classroomId } = req.params;
 
     const formSession = new FormSession({
@@ -194,10 +197,10 @@ router.get('/:classroomId/form', async (req, res) => {
 
     let session = await formSession.save();
     res.render('./classroom/form.ejs',{sessionId : session._id , classroomId})
-})
+}))
 
 //end form
-router.get('/:classroomId/form/:sessionId', async (req, res) => {
+router.get('/:classroomId/form/:sessionId', wrapAsync( async(req, res) => {
     const { sessionId , classroomId } = req.params;
     const formSession = await FormSession.findById(sessionId);
     if (formSession) {
@@ -205,9 +208,10 @@ router.get('/:classroomId/form/:sessionId', async (req, res) => {
         await formSession.save();
         res.render('./classroom/map.ejs' , { records: formSession.attendance, sessionId , classroomId}) // record those fillup form 
     } else {
-        res.status(400).send('Form session not found');
+        req.flash("error", "No open form session found");
+        res.redirect(`/classroom/${classroomId}`);
     }
-});
+}));
 
 async function getAllStudentsInClassroom(classroomId) {
     try {
@@ -228,8 +232,8 @@ async function getAllStudentsInClassroom(classroomId) {
     }
 }
 
-router.post('/:classroomId/form/:sessionId/finalize-attendance', async (req, res) => {
-    try {
+router.post('/:classroomId/form/:sessionId/finalize-attendance', wrapAsync( async (req, res) => {
+    
         const { sessionId, proxy, records } = req.body;
         let {classroomId} = req.params;
         const proxyList = proxy.split(",").map(item => item.trim());
@@ -295,10 +299,7 @@ router.post('/:classroomId/form/:sessionId/finalize-attendance', async (req, res
         await FormSession.findByIdAndDelete(sessionId);
         req.flash("success", "Attendance added!");
         res.redirect(`/classroom/${classroomId}`)
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error finalizing attendance', error });
-    }
-});
+    
+}));
 
 module.exports = router;

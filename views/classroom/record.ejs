@@ -80,7 +80,10 @@
     <form id="attendanceForm" action="/classroom/<%= classroomId %>/submit-attendance" method="POST">
         <input type="hidden" id="latitude" name="latitude">
         <input type="hidden" id="longitude" name="longitude">
-        <button type="submit">Give attendance</button>
+        <% if (currUser && !teacherId.equals(currUser._id)) { %>
+            <button type="submit">Give attendance</button>
+        <% } %>
+        
     </form>
 </div>
 
