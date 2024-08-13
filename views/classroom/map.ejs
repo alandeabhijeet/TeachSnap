@@ -1,24 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Map</title>
-    <!-- Include Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <style>
-        #map { height: 600px; width: 100%; }
-    </style>
-</head>
-<body>
-   
+<% layout("/layouts/boilerplate.ejs") -%>
+
     <div id="map" style="height: 600px;"></div>
     <form id="finalizeForm" method="POST" action="/classroom/<%=classroomId %>/form/<%= sessionId %>/finalize-attendance">
         <input type="hidden" name="sessionId" value="<%= sessionId %>">
         <input type="hidden" name="records" value="<%= records %>">
         <input type="hidden" id="updatedRecords" name="updatedRecords">
-        <input type="text" placeholder="Proxy Student" name="proxy">
-        <button type="submit">Finalize Attendance</button>
+        <div class="user-box fbtn">
+            <input type="text" placeholder="Proxy Student seperated by , " name="proxy">
+            <button type="submit">Finalize Attendance</button>
+        </div>
+        
+        
     </form>
 
     <!-- Include Leaflet JS -->
@@ -48,5 +40,4 @@
             document.getElementById('updatedRecords').value = JSON.stringify(updatedRecords);
         });
     </script>
-</body>
-</html>
+

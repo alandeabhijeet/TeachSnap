@@ -883,3 +883,4 @@ form button:active {
   font-weight: 300;
 }
 
+#map { height: 600px; width: 100%; }

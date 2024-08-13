@@ -151,7 +151,7 @@ async function findRegistrationNumber(classroomId, userId) {
             const registrationNumber = classroom.students[0].registrationNumber;
             return registrationNumber;
         } else {
-            return null; // No matching student found
+            return null; 
         }
     } catch (error) {
         console.error('Error finding registration number:', error);
@@ -167,7 +167,6 @@ router.post('/:classroomId/submit-attendance', async (req, res) => {
     const formSession = await FormSession.findOne({ classroom: classroomId });
 
     if (formSession.isOpen) {
-        // Add the attendance record
         formSession.attendance.push({
             registerNo,
             status: true,
@@ -177,9 +176,11 @@ router.post('/:classroomId/submit-attendance', async (req, res) => {
         console.log('Submit form Student')
         console.log(formSession)
         await formSession.save();
-        res.send('thank-you');  
+        req.flash("success", "Attendance added!");
+        res.redirect(`/classroom/${classroomId}`);
     } else {
-        res.status(400).send('No open form session found');
+        req.flash("error", "No open form session found");
+        res.redirect(`/classroom/${classroomId}`);
     }
 });
 
@@ -197,6 +198,7 @@ router.get('/:classroomId/form', async (req, res) => {
     res.render('./classroom/form.ejs',{sessionId : session._id , classroomId})
 })
 
+//end form
 router.get('/:classroomId/form/:sessionId', async (req, res) => {
     const { sessionId , classroomId } = req.params;
     console.log(sessionId)
@@ -217,8 +219,7 @@ async function getAllStudentsInClassroom(classroomId) {
     try {
         const classroom = await Classroom.findById(classroomId)
             .populate({
-                path: 'students.user'  // Populate the user field inside the students array
-                  // Only select the fields you need from the User model
+                path: 'students.user' 
             })
             .lean();  // Convert to a plain JavaScript object
         
@@ -243,8 +244,8 @@ router.post('/:classroomId/form/:sessionId/finalize-attendance', async (req, res
         const proxyList = proxy.split(",").map(item => item.trim());
         const stringArray = records.split("},").map(item => item.trim());
 
-    console.log(proxyList)
-    const parseObjects = (arr) => {
+        console.log(proxyList)
+        const parseObjects = (arr) => {
         return arr.map(str => {
           // Clean up the string
           const cleanedStr = str
@@ -310,8 +311,10 @@ router.post('/:classroomId/form/:sessionId/finalize-attendance', async (req, res
 
         // Save the register document
         await register.save();
-
-        res.status(200).json({ message: 'Attendance finalized successfully', register });
+        await FormSession.findByIdAndDelete(sessionId);
+        req.flash("success", "Attendance added!");
+        console.log('Before save 4')
+        res.redirect(`/classroom/${classroomId}`)
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error finalizing attendance', error });
