@@ -66,7 +66,7 @@ router.get('/enroll',isLoggedIn, wrapAsync( async(req,res)=>{
 
 router.post('/enroll',isLoggedIn,validateClassroom,wrapAsync( async (req,res)=>{
     let {code , registrationNumber} = req.body;
-    const currUserId = res.locals.currUsfinder._id;
+    const currUserId = res.locals.currUser._id;
 
     let cls = await Classroom.findOne({code : code});
 
