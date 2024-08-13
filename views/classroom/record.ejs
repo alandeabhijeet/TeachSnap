@@ -74,3 +74,24 @@
         </tfoot>
     </table>
 </div>
+
+<div class="fbtn">
+    <form id="attendanceForm" action="/classroom/<%= classroomId %>/submit-attendance" method="POST">
+        <input type="hidden" id="latitude" name="latitude">
+        <input type="hidden" id="longitude" name="longitude">
+        <button type="submit">Give attendance</button>
+    </form>
+</div>
+
+<script>
+    // Get user's location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            document.getElementById('latitude').value = position.coords.latitude;
+            document.getElementById('longitude').value = position.coords.longitude;
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+</script>
+

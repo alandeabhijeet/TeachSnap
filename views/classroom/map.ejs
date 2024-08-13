@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Map</title>
+    <!-- Include Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map { height: 600px; width: 100%; }
+    </style>
+</head>
+<body>
+   
+    <div id="map" style="height: 600px;"></div>
+    <form id="finalizeForm" method="POST" action="/classroom/<%=classroomId %>/form/<%= sessionId %>/finalize-attendance">
+        <input type="hidden" name="sessionId" value="<%= sessionId %>">
+        <input type="hidden" name="records" value="<%= records %>">
+        <input type="hidden" id="updatedRecords" name="updatedRecords">
+        <input type="text" placeholder="Proxy Student" name="proxy">
+        <button type="submit">Finalize Attendance</button>
+    </form>
+
+    <!-- Include Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <script>
+        const map = L.map('map').setView([15.3939419, 75.024363], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'TechSnap'
+        }).addTo(map);
+
+        const records = <%- JSON.stringify(records) %>;
+        let updatedRecords = records.slice(); // Clone the original records
+
+        records.forEach(record => {
+            const marker = L.marker([record.latitude, record.longitude]).addTo(map)
+                .bindTooltip(`Register No: ${record.registerNo}`, {permanent: false, direction: 'top'})
+                .bindPopup(`Register No: ${record.registerNo}`)
+                .on('click', function() {
+                    updatedRecords = updatedRecords.filter(r => r.registerNo !== record.registerNo);
+                    map.removeLayer(marker);
+                });
+        });
+
+        document.getElementById('finalizeForm').addEventListener('submit', function() {
+            document.getElementById('updatedRecords').value = JSON.stringify(updatedRecords);
+        });
+    </script>
+</body>
+</html>
