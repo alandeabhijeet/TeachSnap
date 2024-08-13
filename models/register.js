@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const attendanceRecordSchema = new Schema({
     registerNo : {type :String , required: true},
-    status: { type: Boolean, required: true, default: false },  // Default to false
+    status: { type: Boolean, required: true, default: false }, 
     latitude: { type: Number },
     longitude: { type: Number }
 }, { _id: false }); 

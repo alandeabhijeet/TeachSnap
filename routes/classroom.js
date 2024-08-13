@@ -144,7 +144,7 @@ async function findRegistrationNumber(classroomId, userId) {
     try {
         const classroom = await Classroom.findOne(
             { _id: classroomId, 'students.user': userId },
-            { 'students.$': 1 } // This will project only the matching student in the students array
+            { 'students.$': 1 } 
         ).exec();
 
         if (classroom && classroom.students.length > 0) {
@@ -173,8 +173,6 @@ router.post('/:classroomId/submit-attendance', async (req, res) => {
             latitude,
             longitude
         });
-        console.log('Submit form Student')
-        console.log(formSession)
         await formSession.save();
         req.flash("success", "Attendance added!");
         res.redirect(`/classroom/${classroomId}`);
@@ -201,14 +199,10 @@ router.get('/:classroomId/form', async (req, res) => {
 //end form
 router.get('/:classroomId/form/:sessionId', async (req, res) => {
     const { sessionId , classroomId } = req.params;
-    console.log(sessionId)
     const formSession = await FormSession.findById(sessionId);
-    console.log(formSession)
     if (formSession) {
         formSession.isOpen = false;  
         await formSession.save();
-        console.log('Filled student data in formSession.attendance')
-        console.log(formSession.attendance)
         res.render('./classroom/map.ejs' , { records: formSession.attendance, sessionId , classroomId}) // record those fillup form 
     } else {
         res.status(400).send('Form session not found');
@@ -221,14 +215,12 @@ async function getAllStudentsInClassroom(classroomId) {
             .populate({
                 path: 'students.user' 
             })
-            .lean();  // Convert to a plain JavaScript object
+            .lean(); 
         
         if (!classroom) {
-            console.log('Classroom not found');
             return null;
         }
 
-        console.log('All Students in Classroom:', classroom.students);
         return classroom.students;
     } catch (error) {
         console.error('Error fetching students:', error);
@@ -240,11 +232,9 @@ router.post('/:classroomId/form/:sessionId/finalize-attendance', async (req, res
     try {
         const { sessionId, proxy, records } = req.body;
         let {classroomId} = req.params;
-        // Convert proxy string into an array
         const proxyList = proxy.split(",").map(item => item.trim());
         const stringArray = records.split("},").map(item => item.trim());
 
-        console.log(proxyList)
         const parseObjects = (arr) => {
         return arr.map(str => {
           // Clean up the string
@@ -260,26 +250,22 @@ router.post('/:classroomId/form/:sessionId/finalize-attendance', async (req, res
           const validStr = cleanedStr.endsWith('}') ? cleanedStr : cleanedStr + '}';
       
           try {
-            // Parse the cleaned string into an object
             return JSON.parse(validStr);
           } catch (e) {
             console.error("Parsing error: ", e);
             return null;
           }
-        }).filter(obj => obj !== null); // Filter out any parsing errors
+        }).filter(obj => obj !== null); 
       };
       
-      // Parse the array of strings
       const objectArray = parseObjects(stringArray);
       
-      console.log(objectArray);
         const updatedRecords = objectArray.map(record => {
             if (record.status && proxyList.includes(record.registerNo)) {
-                return { ...record, status: 0 }; // Update status to 0 for proxy entries
+                return { ...record, status: 0 }; 
             }
             return record;
         });
-        console.log(`Updated : ${updatedRecords}`);
         const allStudents = await getAllStudentsInClassroom(classroomId)
         const attendanceRecords = [...updatedRecords];
         allStudents.forEach(student => {
@@ -291,39 +277,28 @@ router.post('/:classroomId/form/:sessionId/finalize-attendance', async (req, res
               });
             }
           });
-          console.log(attendanceRecords)
-        // Find or create a register document
         let register = await Register.findOne({
             classroom: req.params.classroomId,
-            date: new Date() // Assuming you want to match today's date
+            date: new Date() // today's date
         });
 
         if (!register) {
-            // If no register found, create a new one
             register = new Register({
                 classroom: req.params.classroomId,
                 attendance: attendanceRecords
             });
         } else {
-            // Update existing register document
             register.attendance = attendanceRecords;
         }
 
-        // Save the register document
         await register.save();
         await FormSession.findByIdAndDelete(sessionId);
         req.flash("success", "Attendance added!");
-        console.log('Before save 4')
         res.redirect(`/classroom/${classroomId}`)
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error finalizing attendance', error });
     }
 });
-
-
-
-
-
 
 module.exports = router;
