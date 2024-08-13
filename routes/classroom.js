@@ -161,7 +161,7 @@ async function findRegistrationNumber(classroomId, userId) {
         throw error;
     }
 }
-router.post('/:classroomId/submit-attendance', wrapAsync( async(req, res) => {
+router.post('/:classroomId/submit-attendance',isLoggedIn, wrapAsync( async(req, res) => {
     let {classroomId} = req.params
     const {  latitude, longitude } = req.body;
     const currUserId = res.locals.currUser._id;
@@ -185,7 +185,7 @@ router.post('/:classroomId/submit-attendance', wrapAsync( async(req, res) => {
     }
 }));
 
-router.get('/:classroomId/form',wrapAsync( async (req, res) => {
+router.get('/:classroomId/form',isLoggedIn, isTeacher ,wrapAsync( async (req, res) => {
     const { classroomId } = req.params;
 
     const formSession = new FormSession({
@@ -200,7 +200,7 @@ router.get('/:classroomId/form',wrapAsync( async (req, res) => {
 }))
 
 //end form
-router.get('/:classroomId/form/:sessionId', wrapAsync( async(req, res) => {
+router.get('/:classroomId/form/:sessionId',isLoggedIn, isTeacher , wrapAsync( async(req, res) => {
     const { sessionId , classroomId } = req.params;
     const formSession = await FormSession.findById(sessionId);
     if (formSession) {
@@ -232,7 +232,7 @@ async function getAllStudentsInClassroom(classroomId) {
     }
 }
 
-router.post('/:classroomId/form/:sessionId/finalize-attendance', wrapAsync( async (req, res) => {
+router.post('/:classroomId/form/:sessionId/finalize-attendance',isLoggedIn, isTeacher , wrapAsync( async (req, res) => {
     
         const { sessionId, proxy, records } = req.body;
         let {classroomId} = req.params;
@@ -265,7 +265,7 @@ router.post('/:classroomId/form/:sessionId/finalize-attendance', wrapAsync( asyn
       const objectArray = parseObjects(stringArray);
       
         const updatedRecords = objectArray.map(record => {
-            if (record.status && proxyList.includes(record.registerNo)) {
+            if((record.latitude === null) || (record.status && proxyList.includes(record.registerNo)) ) {
                 return { ...record, status: 0 }; 
             }
             return record;
