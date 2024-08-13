@@ -174,7 +174,8 @@ router.post('/:classroomId/submit-attendance', async (req, res) => {
             latitude,
             longitude
         });
-
+        console.log('Submit form Student')
+        console.log(formSession)
         await formSession.save();
         res.send('thank-you');  
     } else {
@@ -198,8 +199,9 @@ router.get('/:classroomId/form', async (req, res) => {
 
 router.get('/:classroomId/form/:sessionId', async (req, res) => {
     const { sessionId , classroomId } = req.params;
-
+    console.log(sessionId)
     const formSession = await FormSession.findById(sessionId);
+    console.log(formSession)
     if (formSession) {
         formSession.isOpen = false;  
         await formSession.save();
@@ -211,12 +213,32 @@ router.get('/:classroomId/form/:sessionId', async (req, res) => {
     }
 });
 
+async function getAllStudentsInClassroom(classroomId) {
+    try {
+        const classroom = await Classroom.findById(classroomId)
+            .populate({
+                path: 'students.user'  // Populate the user field inside the students array
+                  // Only select the fields you need from the User model
+            })
+            .lean();  // Convert to a plain JavaScript object
+        
+        if (!classroom) {
+            console.log('Classroom not found');
+            return null;
+        }
 
+        console.log('All Students in Classroom:', classroom.students);
+        return classroom.students;
+    } catch (error) {
+        console.error('Error fetching students:', error);
+        return null;
+    }
+}
 
 router.post('/:classroomId/form/:sessionId/finalize-attendance', async (req, res) => {
     try {
         const { sessionId, proxy, records } = req.body;
-        
+        let {classroomId} = req.params;
         // Convert proxy string into an array
         const proxyList = proxy.split(",").map(item => item.trim());
         const stringArray = records.split("},").map(item => item.trim());
@@ -256,7 +278,19 @@ router.post('/:classroomId/form/:sessionId/finalize-attendance', async (req, res
             }
             return record;
         });
-
+        console.log(`Updated : ${updatedRecords}`);
+        const allStudents = await getAllStudentsInClassroom(classroomId)
+        const attendanceRecords = [...updatedRecords];
+        allStudents.forEach(student => {
+            const isStudentUpdated = updatedRecords.some(record => record.registerNo === student.registrationNumber);
+            if (!isStudentUpdated) {
+              attendanceRecords.push({
+                registerNo: student.registrationNumber,
+                status: false,
+              });
+            }
+          });
+          console.log(attendanceRecords)
         // Find or create a register document
         let register = await Register.findOne({
             classroom: req.params.classroomId,
@@ -267,11 +301,11 @@ router.post('/:classroomId/form/:sessionId/finalize-attendance', async (req, res
             // If no register found, create a new one
             register = new Register({
                 classroom: req.params.classroomId,
-                attendance: updatedRecords
+                attendance: attendanceRecords
             });
         } else {
             // Update existing register document
-            register.attendance = updatedRecords;
+            register.attendance = attendanceRecords;
         }
 
         // Save the register document
